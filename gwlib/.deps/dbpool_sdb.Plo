@@ -1,0 +1,3 @@
+dbpool_sdb.lo: dbpool_sdb.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

@@ -1,0 +1,3 @@
+dbpool_cass.lo: dbpool_cass.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

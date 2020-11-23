@@ -1,0 +1,3 @@
+dbpool_pgsql.lo: dbpool_pgsql.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

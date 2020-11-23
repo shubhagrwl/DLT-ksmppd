@@ -1,0 +1,3 @@
+dbpool_redis.lo: dbpool_redis.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

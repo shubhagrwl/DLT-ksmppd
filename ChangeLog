@@ -1,0 +1,191 @@
+2020-01-06 Alexander Malysh <amalysh @ kannel.org>
+   * gw/smsc/smsc_smpp.c, doc/userguide.xml, gwlib/cfg.def: added new config
+     option to retry even if SMSC rejects login due to wrong username & password.
+
+2020-01-06 Alexander Malysh <amalysh @ kannel.org>
+    * doc/userguide/userguide.xml, gw/urltrans.c: added %U escape code for
+      hexcoded UDH.
+
+2019-12-10  Stipe Tolj  <stolj at kannel.org>
+    * doc/userguide/userguide.xml: fixed last commit, wrong XML struct.
+    Thanks to Alexander Malysh for pointing to this.
+    
+2019-12-07  Stipe Tolj  <stolj at kannel.org>
+    * gw/smsc/http/generic.c: allow using the 'alt-charset' usage in the MT
+      direction too, to transcode the payload before URL-encoding and 
+      setting the corresponding charset="" value in the content-type header
+      for HTTP POST methods.
+      
+2019-12-04  Stipe Tolj  <stolj at kannel.org>
+    * doc/userguide/userguide.xml: document 'use-post' for generic type
+      of HTTP SMSC.
+    * gw/smsc_http_p.h: add use_post flag.
+    * gw/smsc_http.c: use 'use-post' boolean config from 'group = smsc'.
+    * gw/smsc/http/generic.c: implement HTTP POST method support for the
+      sending and receiving side of the 'system-type = generic'.
+    * gwlib/cfg.def: add 'use-post' config directive to 'group = smsc'.
+    * gwlib/http.[ch]: export function parse_cgivars() publically.
+    This patchset adds support for the HTTP POST method for the SMSC HTTP
+    type 'generic'. Handling long Unicode messages can easily exceed the
+    max length limits of HTTP GET URLs on various HTTP servers and HTTP
+    proxy components, causing HTTP/502 and other defects in processing.
+    Now we can use content-type 'application/x-www-form-urlencoded' data
+    in the HTTP POST body to overcome those limitations if necessary.
+    
+2019-12-04  Stipe Tolj  <stolj at kannel.org>
+    * doc/userguide/userguide.xml: clarify dlr-url and dlr-mask usage in
+      'group = sendsms-user' contexts.
+    * gw/smsbox.c: fix non-working 'dlr-url' for 'group = sendsms-user',
+      which would never trigger the if statement, since the upper layer
+      of the sendsms HTTP interface would init msg->sms.dlr_url with a 
+      empty string; now we handle also a 'dlr-mask' in the group as
+      default value if no HTTP GET paramter is presented.
+    * gw/urltrans.c: ensure we also use 'dlr-mask' as config directive in
+      the 'group = sendsms-user' context as possible default.
+    * gwlib/cfg.def: add 'dlr-mask' to 'group = sendsms-user'.
+    This patchset fixes the default 'dlr-url' handling for the sendsms-user
+    group handling, where the default would effetively never be handled.    
+      
+2019-11-27  Stipe Tolj  <stolj at kannel.org>
+    * gw/bb_smscconn.c: fix missing DLR SMSC FAIL payload <NACK/xxx> for 
+      concatenated messages.
+      
+2019-08-13 Alexander Malysh <amalysh @ kannel.org>
+    * gw/bb_boxc.c: fixed memleak. 
+      Thanks to Denis S.Davydov.
+
+2019-08-03 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/http.[ch]: added DELETE moethod support.
+
+2019-08-03 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/http.[ch]: added PUT support.
+      Thanks to Lamasuta, Franck <franck.lamasuta at vodafone.com> for this patch.
+
+2019-08-03 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/dbpool_mysql.c: fixed compilation for mysql v8. This fixes #782.
+
+2019-08-03 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/dbpool_mysql.c: fixed compilation for mysql v8. This fixes #782.
+
+2019-08-03 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/cfg.c: fixed issue with multiple includes of the same file, we don't bell out
+      anymore, just ignore
+
+2019-07-09 Alexander Malysh <amalysh @ kannel.org>
+    * gw/smsc/smsc_cimd2.c: use smsc connection id instead of name for DLRs.
+
+2019-07-09 Alexander Malysh <amalysh @ kannel.org>
+    * doc/userguide/userguide.xml, gw/smsc/http/clickatell.c, gw/smsc/smsc_http.c,
+      gw/smsc/smsc_http_p.h, gwlib/cfg.def: applied patch from Franck Lamasuta.
+      Main changes:
+        - Better support of Clickatell HTTP API (Developer’s Central): from, mo, validity and callback parameters
+        - Better DLR and error management
+ 
+     Minor changes:
+       - Removed useless struct field (conndata->proxy)
+       - Fixed code indentation
+       - Removed tabs in cfg.def
+       - User guide: Fixed invalid character entities (&auml; and &nbsp;) + Fixed literals (& and >)
+
+2019-06-24 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/http.c: this fixes race if no list is in conn pool anymore #802.
+      Thanks to Ivan Shcherbak for the fix.
+
+2019-06-07 Alexander Malysh <amalysh @ kannel.org>
+    * gwlib/octstr.c: fixed url encoding safe chars
+
+2019-01-21 Alexander Malysh <amalysh @ kannel.org>
+    * gw/bb_boxc.c: fixed small mem leak wile initializing of box_allow_ip/box_deny_ip.
+      Thanks to Paul Bagyenda for report.
+
+2018-11-22  Stipe Tolj  <stolj at kannel.org>
+    * gwlib/date.c: fix case where, struct universaltime element offset_sec may
+      be initialized with random value on MacOS X 10.11.x (clang-800.0.42.1), 
+      but is then used  in the following up call to date_convert_universal(), so 
+      make sure we set this to zero as we're handlign GMT times anyway. NLC.
+      
+2018-11-03  Stipe Tolj  <stolj at kannel.org>
+    * gw/smsbox.c: re-intend smsbox_req_handle(). NLC.
+    
+2018-10-01  Stipe Tolj  <stolj at kannel.org>
+    * gw/bb_boxc.c: use init_smsbox_routes() for initial and reload cases, use
+      smsbox_restart() to reload smsbox routing.
+    * gw/bb_http.c: interpret bb_graceful_restart() outcome in HTTP admin command
+      function httpd_graceful_restart().
+    * gw/bearerbox.c: use gw_log_force() for starting/stopping log evetns that
+      we want to see in the log, no matter waht log-level is used (forced),
+      reload config in bb_graceful_restart() and call the sub-module reload
+      functions.
+    * gw/bearebox.h: change prototype for smsc2_graceful_restart().
+    This patchsets implement the reloading (aka graceful restart) capabilities
+    for the MO direction smsbox routing groups.
+
+2018-09-26 Alexander Malysh <amalysh @ kannnel.org>
+    * gwlib/date.[ch]: added handling of fraction
+
+2018-09-26 Alexander Malysh <amalysh @ kannnel.org>
+    * gwlib/date.[ch]: added handling of timezone
+
+2018-09-25  Stipe Tolj  <stolj at kannel.org>
+   * gwlib/http.c: fixing PANIC condition within conn_unregister() in case the
+     connection was destroyed already.
+     [Msg-Id: <5B964593.1070105@kannel.org>]
+     
+2018-09-07 Alexander Malysh <amalysh @ kannnel.org>
+   * gw/smsc/smsc_http.c, gw/smsc/smsc_http_p.h, gw/smsc/http/*.c: moved kannel
+     callbacks to gw/smsc/http/kannel.c. Added gw/smsc/http/*.c to Makefile.am
+     and use new gw_dlopen_get_symbol to get callback symbols.
+
+2018-09-07 Alexander Malysh <amalysh @ kannnel.org>
+   * gwlib/gw-dlopen.[ch]: added simple dlopen lookup functionality.
+
+2018-09-07  Stipe Tolj  <stolj at kannel.org>
+   * configure.in: removing own binary suffix handling, automake provides an own
+     construct for this.
+     [https://www.gnu.org/software/automake/manual/automake.html#Renaming]
+     
+2018-09-04  Stipe Tolj  <stolj at kannel.org>
+   * test/test_http.c: fix compiler warnings. NLC.
+   
+2018-09-04  Stipe Tolj  <stolj at kannel.org>
+   * test/fakewap.c: cast panic() output to fix compiler warning on 64bit.
+  
+2018-09-04  Stipe Tolj  <stolj at kannel.org>
+   * doc/doxygen/kannel.conf: re-tag the config with the current svn snapshot 
+     revision number.
+     
+2018-08-30  Stipe Tolj  <stolj at kannel.org>
+   * test/test_dbpool.c: fix compiler warning/error in case we compile without
+     any DB support. NLC.
+     
+2018-08-28  Stipe Tolj  <stolj at kannel.org>
+   * doc/userguide/userguide.xml: fixed 'window' value type for GSMA OneAPI.
+     Thanks to Franck Lamasuta for this patch.
+
+2018-08-20 Alexander Malysh <amalysh @ kannnel.org>
+   * switched wmlscript to automake.
+
+2018-08-20 Alexander Malysh <amalysh @ kannnel.org>
+   * wmlscript/wsgram.[chy], wmlscript/wsint.h, wmlscript/wslexer.c: Applied patch that
+     fixes build issues with bison. This fixes #699 .
+     Thanks to Rici Lake for this patch.
+
+2018-08-12 Alexander Malysh <amalysh @ kannnel.org>
+   * gwlib/octstr.c: applied patch that fixes octstr_shrink_blanks.
+     Thanks to Werner Coetzee for this patch.
+
+2018-06-19  Stipe Tolj  <stolj at kannel.org>
+    * Making stable release 1.4.5.
+
+2018-06-19  Stipe Tolj  <stolj at kannel.org>
+    * README: update documentation build package dependencies.
+
+2018-06-19  Stipe Tolj  <stolj at kannel.org>
+    * bootstrap.sh: re-order GNU auto-tools calls, NLC.
+    * Makefile.in: provide phony 'am--refresh' to cope with bootstrapped source
+      packages on different environments.
+
+2018-06-19  Stipe Tolj  <stolj at kannel.org>
+    * doc/*/[alligata|arch|userguide|wtls].xml: update DOCTYPE URL reference to
+      new official URL location to fix 'make docs' processing.
+    * configure.in: adding Debian 8 location for xml.dcl.

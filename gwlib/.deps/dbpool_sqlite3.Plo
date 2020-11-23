@@ -1,0 +1,3 @@
+dbpool_sqlite3.lo: dbpool_sqlite3.c /usr/include/stdc-predef.h
+
+/usr/include/stdc-predef.h:

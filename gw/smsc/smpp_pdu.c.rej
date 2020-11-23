@@ -1,0 +1,57 @@
+--- gw/smsc/smpp_pdu.c	(revision 5173)
++++ gw/smsc/smpp_pdu.c	(working copy)
+@@ -402,7 +402,7 @@
+ }
+ 
+ 
+-Octstr *smpp_pdu_pack(Octstr *smsc_id, SMPP_PDU *pdu)
++Octstr *smpp_pdu_pack_real(Octstr *smsc_id, SMPP_PDU *pdu, int include_len)
+ {
+     Octstr *os;
+     Octstr *temp;
+@@ -532,15 +532,16 @@
+         break;
+     }
+ 
+-    temp = octstr_create("");
+-    append_encoded_integer(temp, octstr_len(os) + 4, 4);
+-    octstr_insert(os, temp, 0);
+-    octstr_destroy(temp);
++    if(include_len) {
++        temp = octstr_create("");
++        append_encoded_integer(temp, octstr_len(os) + 4, 4);
++        octstr_insert(os, temp, 0);
++        octstr_destroy(temp);
++    }
+ 
+     return os;
+ }
+ 
+-
+ SMPP_PDU *smpp_pdu_unpack(Octstr *smsc_id, Octstr *data_without_len)
+ {
+     SMPP_PDU *pdu;
+@@ -598,6 +599,11 @@
+                         pos += opt_len; \
+                         continue; \
+                     } \
++                    if(p->mname != NULL) { \
++                        warning(0, "SMPP: Optional field (%s) was sent more than once, overwriting", #mname); \
++                        octstr_destroy(p->mname); \
++                        p->mname = NULL; \
++                    } \
+                     copy_until_nul(#mname, data_without_len, &pos, opt_len, &p->mname); \
+                     if (tlv != NULL) dict_put(p->tlv, tlv->name, octstr_duplicate(p->mname)); \
+                 } else
+@@ -610,6 +616,11 @@
+                         pos += opt_len; \
+                         continue; \
+                     } \
++                    if(p->mname != NULL) { \
++                        warning(0, "SMPP: Optional field (%s) was sent more than once, overwriting", #mname); \
++                        octstr_destroy(p->mname); \
++                        p->mname = NULL; \
++                    } \
+                     p->mname = octstr_copy(data_without_len, pos, opt_len); \
+                     pos += opt_len; \
+                     if (tlv != NULL) dict_put(p->tlv, tlv->name, octstr_duplicate(p->mname)); \

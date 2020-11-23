@@ -1,0 +1,11 @@
+--- gwlib/dbpool_mysql.c	(revision 5173)
++++ gwlib/dbpool_mysql.c	(working copy)
+@@ -236,7 +236,7 @@
+     for (i = 0; i < binds_len; i++) {
+         MYSQL_FIELD *field = mysql_fetch_field(result); /* retrieve field metadata */
+ 
+-        debug("gwlib.dbpool_mysql", 0, "column=%s buffer_type=%d max_length=%ld length=%ld", field->name, field->type, field->max_length, field->length);
++//        debug("gwlib.dbpool_mysql", 0, "column=%s buffer_type=%d max_length=%ld length=%ld", field->name, field->type, field->max_length, field->length);
+ 
+         switch(field->type) {
+         case MYSQL_TYPE_TIME:
